@@ -56,14 +56,6 @@
   <textarea rows="5"></textarea>
 </div>
 
-<div id="public-keys">
-  <div class="public-key">
-    <h2>Public key</h2>
-    <p class="hint">Only the person who has a private key will be able to decrypt the message.</p>
-    <textarea rows="5"></textarea>
-  </div>
-</div>
-
 <div id="private-key">
   <h2>Private Key</h2>
   <textarea rows="5"></textarea>
@@ -73,30 +65,26 @@
 
 <pre id="output"></pre>
 <button id="encrypt">Encrypt</button>
-<button id="add-public-key">Add Public Key</button>
 <button id="add-private-key">Add Private Key</button>
 
 <script>
 const query = query => document.querySelector(query);
 const queryAll = query => Array.prototype.slice.apply(document.querySelectorAll(query));
-const publicKeyTemplate = query('#public-keys').innerHTML;
-
-query('#add-public-key').addEventListener('click', () => {
-  const element = document.createElement('div');
-  element.innerHTML = publicKeyTemplate;
-  query('#public-keys').appendChild(element);
-});
 
 query('#add-private-key').addEventListener('click', () => {
   query('#private-key').className = 'visible';
 });
 
-function getKey(textarea, type) {
-  const { value } = textarea;
+function getKeyFromString(value, type){
   if (!value) {
     throw new Error(`${type} key missing`);
   }
   return openpgp.key.readArmored(value).keys[0];
+}
+
+function getKey(textarea, type) {
+  const { value } = textarea;
+  return getKeyFromString(value);
 }
 
 function getPrivateKey() {
@@ -117,7 +105,7 @@ query('#encrypt').addEventListener('click', () => {
   getPrivateKey().then(privateKey => {
     const options = {
       data: query('.message textarea').value,
-      publicKeys: queryAll('.public-key textarea').map(el => getKey(el, 'public')),
+      publicKeys: getKeyFromString("-----BEGIN PGP PUBLIC KEY BLOCK-----\nVersion: GnuPG v1\n\n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\nHjAnRgC6EO4jWKIO+OPK28/0jJmRU16BrA==\n=gRnH\n-----END PGP PUBLIC KEY BLOCK-----", 'public'),
       privateKey: privateKey,
       armor: true,
     };
