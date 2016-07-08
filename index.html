@@ -67,6 +67,13 @@
 <button id="encrypt">Encrypt</button>
 <button id="add-private-key">Add Private Key</button>
 
+<p>Or just import my key into GPG:</p>
+
+<code>
+  gpg --keyserver pgp.mit.edu  --search-keys ben@bensites.com
+  echo "secret message" | gpg -sea -r ben@bensites.com
+</code>
+
 <script>
 const query = query => document.querySelector(query);
 const queryAll = query => Array.prototype.slice.apply(document.querySelectorAll(query));
